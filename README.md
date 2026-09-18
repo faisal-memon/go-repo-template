@@ -4,7 +4,7 @@ A reusable starting point for Go repositories. Create a new GitHub repository fr
 
 The template includes:
 
-- a Makefile for formatting, linting, tests, and dependency maintenance;
+- a Makefile for formatting, linting, tests, vulnerability checks, and dependency maintenance;
 - pinned Go tooling versions in `.versions`;
 - `golangci-lint` configuration and a local tool cache;
 - continuous integration and release workflows;
