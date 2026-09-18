@@ -16,10 +16,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7
 
-      - name: Update go.mod
-        id: update-go
-        uses: ./
-
       - name: Update golangci-lint
         id: update-golangci-lint
         uses: faisal-memon/update-golangci-lint-action@v1
@@ -34,23 +30,16 @@ jobs:
           path: .tools/golangci-lint
           key: ${{ runner.os }}-golangci-lint-${{ hashFiles('.versions') }}
 
-      - name: Run go mod tidy
-        if: steps.update-go.outputs.changed == 'true'
-        run: make tidy
-
       - name: Run lint fix
         if: steps.update-golangci-lint.outputs.changed == 'true'
         run: make lint-fix
 
       - name: Create pull request
-        if: steps.update-go.outputs.changed == 'true' || steps.update-golangci-lint.outputs.changed == 'true'
+        if: steps.update-golangci-lint.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
           commit-message: Update Go tooling
           title: Update Go tooling
           body: |
-            Updates this action's Go toolchain metadata.
-
-            - go.mod Go version: `${{ steps.update-go.outputs.previous-version }}` -> `${{ steps.update-go.outputs.updated-version }}`
-            - golangci-lint version: `${{ steps.update-golangci-lint.outputs.previous-lint-version }}` -> `${{ steps.update-golangci-lint.outputs.current-lint-version }}`
+            Updates the pinned golangci-lint version in .versions.
           branch: chore/update-go-tooling
