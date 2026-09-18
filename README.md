@@ -1,56 +1,15 @@
-# go-repo-template
+# Go Repository Template
 
-Simple action to keep `go.mod` up to date with the latest stable Go release from `go.dev`.
+A reusable starting point for Go repositories. Create a new GitHub repository from this template to get a consistent project foundation without copying project-specific implementation code.
 
-## Example
+The template includes:
 
-```yaml
-name: Update Go Version
+- a Makefile for formatting, linting, tests, and dependency maintenance;
+- pinned Go tooling versions in `.versions`;
+- `golangci-lint` configuration and a local tool cache;
+- continuous integration and release workflows;
+- Dependabot updates for Go modules and GitHub Actions;
+- reusable workflows for keeping Go and linting versions current;
+- semantic versioning support through pull requests and releases.
 
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 9 * * 1"
-
-jobs:
-  update-go:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Update go.mod
-        id: update
-        uses: faisal-memon/go-repo-template@v2
-        with:
-          update-toolchain: "true"
-
-      - name: Create pull request
-        if: steps.update.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: Update Go version to ${{ steps.update.outputs.updated-version }}
-          title: Update Go version to ${{ steps.update.outputs.updated-version }}
-          body: |
-            go.mod Go version: `${{ steps.update.outputs.previous-version }}` -> `${{ steps.update.outputs.updated-version }}`.
-          branch: chore/update-go-${{ steps.update.outputs.updated-version }}
-```
-
-## Inputs
-
-| Argument | Default | Explanation |
-| --- | --- | --- |
-|`go-mod-path`| `go.mod`| path to the `go.mod` file |
-|`update-toolchain`| `false` | When `true`, also updates an existing `toolchain go...` line to match |
-
-## Outputs
-
-| Value | Explanation |
-| --- | --- |
-|`changed` | `true` when the action modified the target file |
-|`previous-version` | the version originally declared by the `go` directive when `changed` is `true` |
-|`updated-version` | the version written to the `go` directive when `changed` is `true`|
+After creating a repository from this template, update the module path in `go.mod`, rename the project references in the documentation, and replace the example command with the project’s own implementation. The shared tooling can then remain unchanged as the project evolves.
