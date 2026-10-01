@@ -12,8 +12,11 @@ GOLANGCI_LINT_BIN := $(GOLANGCI_LINT_DIR)/golangci-lint
 
 lint: $(GOLANGCI_LINT_BIN)
 	@test -z "$$($(GOFMT) -l .)"
-	@$(GO) vet ./...
-	@$(GOLANGCI_LINT_BIN) run ./...
+	@packages="$$($(GO) list ./... 2>/dev/null)"; \
+	if test -n "$$packages"; then \
+		$(GO) vet ./...; \
+		$(GOLANGCI_LINT_BIN) run ./...; \
+	fi
 
 lint-fix: $(GOLANGCI_LINT_BIN)
 	@$(GOLANGCI_LINT_BIN) run --fix ./...
