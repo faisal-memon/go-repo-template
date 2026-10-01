@@ -12,20 +12,29 @@ GOLANGCI_LINT_BIN := $(GOLANGCI_LINT_DIR)/golangci-lint
 
 lint: $(GOLANGCI_LINT_BIN)
 	@test -z "$$($(GOFMT) -l .)"
-	@$(GO) vet ./...
-	@$(GOLANGCI_LINT_BIN) run ./...
+	@packages="$$($(GO) list ./... 2>/dev/null)"; \
+	if test -n "$$packages"; then \
+		$(GO) vet ./...; \
+		$(GOLANGCI_LINT_BIN) run ./...; \
+	fi
 
 lint-fix: $(GOLANGCI_LINT_BIN)
 	@$(GOLANGCI_LINT_BIN) run --fix ./...
 
 test:
-	@$(GO) test ./...
+	@packages="$$($(GO) list ./... 2>/dev/null)"; \
+	if test -n "$$packages"; then \
+		$(GO) test ./...; \
+	fi
 
 tidy:
 	@$(GO) mod tidy
 
 govulncheck:
-	@$(GO) run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION) ./...
+	@packages="$$($(GO) list ./... 2>/dev/null)"; \
+	if test -n "$$packages"; then \
+		$(GO) run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION) ./...; \
+	fi
 
 $(GOLANGCI_LINT_BIN):
 	@echo "Installing golangci-lint $(GOLANGCI_LINT_VERSION)..."
