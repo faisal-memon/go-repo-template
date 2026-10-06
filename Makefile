@@ -19,7 +19,10 @@ lint: $(GOLANGCI_LINT_BIN)
 	fi
 
 lint-fix: $(GOLANGCI_LINT_BIN)
-	@$(GOLANGCI_LINT_BIN) run --fix ./...
+	@packages="$$($(GO) list ./... 2>/dev/null)"; \
+	if test -n "$$packages"; then \
+		$(GOLANGCI_LINT_BIN) run --fix ./...; \
+	fi
 
 test:
 	@packages="$$($(GO) list ./... 2>/dev/null)"; \
