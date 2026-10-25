@@ -26,8 +26,6 @@ jobs:
         uses: faisal-memon/pr-label-semver@v0
         with:
           github-token: ${{ github.token }}
-          write-tag: "true"
-          write-major-tag: "true"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
@@ -35,3 +33,8 @@ jobs:
           tag_name: ${{ steps.bump.outputs.new-tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move floating major tag
+        run: |
+          git tag -f "${{ steps.bump.outputs.major-tag }}" "${{ github.sha }}"
+          git push --force origin "refs/tags/${{ steps.bump.outputs.major-tag }}"
